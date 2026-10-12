@@ -49,6 +49,7 @@ button:hover,button:focus-visible{filter:brightness(1.15);outline:2px solid var(
 <li><a href="#t3">Tema 3 · Gravedad artificial</a></li>
 <li><a href="#t4">Tema 4 · Llantas de F1</a></li>
 <li><a href="#t5">Tema 5 · Control háptico</a></li>
+<li><a href="#conexiones">Conexiones</a></li>
 <li><a href="#fuentes">Fuentes</a></li>
 </ul></nav>
 <main>
@@ -72,10 +73,10 @@ button:hover,button:focus-visible{filter:brightness(1.15);outline:2px solid var(
 <section id="t2">
 <h2>Tema 2 — El salto del personaje: cómo los motores de juego falsean la gravedad</h2>
 <h3>Caso de uso en Ingeniería del Software</h3>
-<p><b>Caso concreto:</b> en la charla «Math for Game Programmers: Building a Better Jump» (GDC 2016), Kyle Pittman explica cómo los juegos de plataformas parametrizan el salto por altura y tiempo deseados en vez de usar la gravedad terrestre. Los diseñadores piden «un salto de 2 m que dure 0,6 s hasta el punto más alto» y el motor deriva la gravedad y la velocidad inicial.</p>
+<p><b>Caso concreto:</b> en la charla «Math for Game Programmers: Building a Better Jump» (GDC 2016), Kyle Pittman explica cómo los juegos de plataformas parametrizan el salto por altura y tiempo deseados en vez de usar la gravedad terrestre. Los diseñadores piden, por ejemplo, «un salto de 3 m que llegue al punto más alto en 0,4 s» y el motor deriva la gravedad (g = 37,5 m/s²) y la velocidad inicial (v₀ = 15 m/s).</p>
 <p><b>Concepto físico:</b> caída libre y tiro parabólico en vertical:</p>
 <div class="eq">y(t) = v₀·t − ½·g·t² &nbsp;&nbsp; h_máx = v₀² / (2g) &nbsp;&nbsp; t_aire = 2v₀ / g<br>Dados h y t_ap (tiempo hasta el ápice): g = 2h / t_ap² &nbsp;&nbsp; v₀ = 2h / t_ap</div>
-<p><b>Por qué modelar la física:</b> con g=9,81 m/s² y un personaje de 1,8 m, un salto de 2 m sería lentísimo e incontrolable. Parametrizar la ecuación permite que cualquier combinación de impulso y gravedad produzca un salto coherente, sin animar cada caso a mano, y que el diseñador ajuste la «sensación» cambiando dos números. Una animación guionizada no reaccionaría a saltos más cortos al soltar el botón. El costo: el resultado deja de ser realista y la integración por cuadros (Δt variable) puede dar saltos distintos a distintas FPS si no se integra con cuidado.</p>
+<p><b>Por qué modelar la física:</b> con g = 9,81 m/s² ese mismo salto de 3 m tardaría t = √(2h/g) = √(6/9,81) ≈ 0,78 s en subir, casi el doble, y se sentiría flotante y lento en un juego de ritmo rápido. Parametrizar la ecuación permite que cualquier combinación de impulso y gravedad produzca un salto coherente, sin animar cada caso a mano, y que el diseñador ajuste la «sensación» cambiando dos números. Una animación guionizada no reaccionaría a saltos más cortos al soltar el botón. El costo: el resultado deja de ser realista y la integración por cuadros (Δt variable) puede dar saltos distintos a distintas FPS si no se integra con cuidado.</p>
 <div class="res"><span class="tag">Recurso: simulación interactiva</span>
 <p>Mueva los controles: la curva se recalcula con y(t) = v₀t − ½gt².</p>
 <div class="ctl"><label for="v0">Impulso v₀ (m/s)</label><input id="v0" type="range" min="2" max="20" step="0.5" value="8"><output id="v0o"></output></div>
@@ -148,6 +149,14 @@ button:hover,button:focus-visible{filter:brightness(1.15);outline:2px solid var(
 <div class="ctl"><label for="gx">Recorrido x (mm)</label><input id="gx" type="range" min="0" max="14" step="0.1" value="0"><output id="gxo"></output></div><div id="trg"></div>
 <p class="src">Curva generada por el autor con el modelo declarado; k ilustrativo.</p></div>
 </section>
+
+<section id="conexiones">
+<h2>Conexiones entre los temas</h2>
+<ul class="f">
+<li><b>Temas 1 y 2:</b> usan las mismas ecuaciones cinemáticas. El salto es el caso en una dimensión del dron con aceleración constante a = −g, y la posición se actualiza igual que en el Tema 1.</li>
+<li><b>Temas 2 y 3:</b> en ambos la «gravedad» es una aceleración que el diseñador elige (g del juego, a_c = ω²r en el hábitat), y se despeja el parámetro de diseño (v₀ o r) a partir de lo que se quiere sentir.</li>
+<li><b>Temas 4 y 5:</b> los dos reemplazan un valor fijo (μ constante, vibración fija) por una fuerza que depende de una variable de estado: μ(N, T) en la llanta y F = −kx en el gatillo.</li>
+</ul></section>
 
 <section id="fuentes">
 <h2>Fuentes</h2>
