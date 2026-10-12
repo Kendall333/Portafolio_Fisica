@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portafolio de Física I — Avance 1</title>
+<style>
+:root{--bg:#eef2f5;--ink:#14202b;--mut:#4d5d6b;--card:#fff;--ac:#0a6c8c;--ac2:#b3226b;--line:#cdd7de}
+@media(prefers-color-scheme:dark){:root{--bg:#10181f;--ink:#e6edf2;--mut:#9fb0be;--card:#18232c;--ac:#4fc3e6;--ac2:#ff7ab8;--line:#2c3b47}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 Charter,"Iowan Old Style",Georgia,serif}
+header{padding:3rem 1.2rem 1.5rem;max-width:880px;margin:auto}
+h1{font:700 2.3rem/1.15 "Trebuchet MS",system-ui,sans-serif;margin:0 0 .5rem}
+h2{font:700 1.45rem/1.25 "Trebuchet MS",system-ui,sans-serif;margin:0 0 1rem;color:var(--ac)}
+h3{font:700 1.05rem "Trebuchet MS",system-ui,sans-serif;margin:1.3rem 0 .3rem}
+.sub{color:var(--mut);margin:0}
+nav{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+nav ul{max-width:880px;margin:auto;padding:.5rem 1.2rem;list-style:none;display:flex;gap:.4rem;flex-wrap:wrap}
+nav a{display:block;padding:.3rem .7rem;border:1px solid var(--line);border-radius:6px;color:var(--ink);text-decoration:none;font:.9rem system-ui,sans-serif}
+nav a:hover,nav a:focus-visible{background:var(--ac);color:#fff;outline:none}
+main{max-width:880px;margin:auto;padding:0 1.2rem 3rem}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1.6rem;margin:1.5rem 0;scroll-margin-top:4rem}
+.eq{font:1rem "Cambria Math",Cambria,serif;background:var(--bg);border-left:4px solid var(--ac);padding:.6rem .9rem;margin:.7rem 0;overflow-x:auto}
+.res{border-top:2px solid var(--ac2);margin-top:1.5rem;padding-top:.3rem}
+.tag{font:600 .8rem system-ui,sans-serif;color:var(--ac2)}
+.ctl{display:grid;grid-template-columns:11rem 1fr 5rem;gap:.6rem;align-items:center;font:.95rem system-ui,sans-serif;margin:.4rem 0}
+.ctl input{width:100%}
+.chart{overflow-x:auto}
+svg text{fill:var(--ink);font:11px system-ui,sans-serif}
+.src{font:.85rem system-ui,sans-serif;color:var(--mut)}
+.todo{background:#fff3cd;color:#5c4400;border:1px dashed #b8860b;padding:.7rem;border-radius:6px;font:.9rem system-ui,sans-serif}
+iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:6px}
+ul.f{padding-left:1.2rem}
+button{font:600 .95rem system-ui,sans-serif;background:var(--ac);color:#fff;border:0;border-radius:6px;padding:.5rem 1rem;cursor:pointer;margin:.4rem 0}
+button:hover,button:focus-visible{filter:brightness(1.15);outline:2px solid var(--ac2)}
+.spin{transform-origin:200px 170px;animation:sp 24s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}} footer{max-width:880px;margin:auto;padding:0 1.2rem 3rem}
+</style>
+</head>
+<body>
+<header>
+<h1>La física detrás del software</h1>
+<p class="sub">Portafolio de evidencias · Física I (FUN-18), Universidad CENFOTEC · Avance 1: Cinemática y Dinámica</p>
+<p class="sub"><b>Estudiante:</b> [TU NOMBRE] · <b>Docente:</b> Andrés Castro Núñez · Periodo 2026-C3</p>
+</header>
+<nav aria-label="Índice de temas"><ul>
+<li><a href="#t1">Tema 1 · Dron de reparto</a></li>
+<li><a href="#t2">Tema 2 · Salto del personaje</a></li>
+<li><a href="#t3">Tema 3 · Gravedad artificial</a></li>
+<li><a href="#t4">Tema 4 · Llantas de F1</a></li>
+<li><a href="#t5">Tema 5 · Control háptico</a></li>
+<li><a href="#fuentes">Fuentes</a></li>
+</ul></nav>
+<main>
+
+<section id="t1">
+<h2>Tema 1 — Rastreo y navegación de un dron de reparto</h2>
+<h3>Caso de uso en Ingeniería del Software</h3>
+<p><b>Caso concreto:</b> el software de vuelo de código abierto PX4, usado en drones de carga y reparto, estima la posición con un filtro de Kalman extendido (EKF2) que propaga un modelo cinemático con las lecturas del acelerómetro entre mediciones de GPS. El GPS llega a pocos hertz; el control necesita la posición decenas o cientos de veces por segundo.</p>
+<p><b>Concepto físico:</b> cinemática 2D con vectores. Cada paso de tiempo Δt se predice así, componente a componente:</p>
+<div class="eq">r(t+Δt) = r(t) + v(t)·Δt + ½·a(t)·Δt² &nbsp;&nbsp; v(t+Δt) = v(t) + a(t)·Δt &nbsp;&nbsp; con r=(x, y), v=(vₓ, v_y), a=(aₓ, a_y)</div>
+<p><b>Por qué modelar la física:</b> una lista de puntos de ruta o una posición interpolada linealmente no sabe qué hace el dron entre dos lecturas de GPS ni cómo giran las velocidades al acelerar. El modelo cinemático rellena ese hueco con la dinámica real y permite pronosticar dónde estará el dron para frenar a tiempo. Lo que cuesta: la integración acumula error (deriva) si el sensor tiene ruido o sesgo, por lo que hay que corregirla con GPS, barómetro y otros sensores.</p>
+<div class="res"><span class="tag">Recurso: visualización de datos</span>
+<p>Ruta declarada, en cuatro tramos de 5 s, desde el reposo en (0, 0): (1) aₓ=+2 m/s², a_y=0; (2) aₓ=0, a_y=+1,5 m/s²; (3) aₓ=−2 m/s², a_y=0; (4) aₓ=0, a_y=−1,5 m/s². El dron termina detenido tras 20 s. Los datos se calculan abajo mediante integración numérica (Δt = 0,1 s) con las ecuaciones de arriba.</p>
+<div class="chart" id="c1a"></div><div class="chart" id="c1b"></div><div class="chart" id="c1c"></div>
+<h3>Animación del recorrido</h3><div id="a1" class="chart"></div><button id="b1">Reproducir vuelo (2x)</button> <span id="r1" class="src"></span>
+<p class="src">Fuente de los datos: generados por el autor a partir de la ruta declarada; no son mediciones reales. Los gráficos se dibujan al cargar la página.</p></div>
+<h3>Qué muestran las gráficas</h3>
+<p>La aceleración es constante a tramos, por eso la velocidad es una recta quebrada y la posición una curva suave, algo que se ve al comparar las tres gráficas. En el tramo 1 solo cambia x; en el tramo 2 solo y: la descomposición en componentes permite tratar cada eje de forma independiente y luego combinarlos en |v|.</p>
+</section>
+
+<section id="t2">
+<h2>Tema 2 — El salto del personaje: cómo los motores de juego falsean la gravedad</h2>
+<h3>Caso de uso en Ingeniería del Software</h3>
+<p><b>Caso concreto:</b> en la charla «Math for Game Programmers: Building a Better Jump» (GDC 2016), Kyle Pittman explica cómo los juegos de plataformas parametrizan el salto por altura y tiempo deseados en vez de usar la gravedad terrestre. Los diseñadores piden «un salto de 2 m que dure 0,6 s hasta el punto más alto» y el motor deriva la gravedad y la velocidad inicial.</p>
+<p><b>Concepto físico:</b> caída libre y tiro parabólico en vertical:</p>
+<div class="eq">y(t) = v₀·t − ½·g·t² &nbsp;&nbsp; h_máx = v₀² / (2g) &nbsp;&nbsp; t_aire = 2v₀ / g<br>Dados h y t_ap (tiempo hasta el ápice): g = 2h / t_ap² &nbsp;&nbsp; v₀ = 2h / t_ap</div>
+<p><b>Por qué modelar la física:</b> con g=9,81 m/s² y un personaje de 1,8 m, un salto de 2 m sería lentísimo e incontrolable. Parametrizar la ecuación permite que cualquier combinación de impulso y gravedad produzca un salto coherente, sin animar cada caso a mano, y que el diseñador ajuste la «sensación» cambiando dos números. Una animación guionizada no reaccionaría a saltos más cortos al soltar el botón. El costo: el resultado deja de ser realista y la integración por cuadros (Δt variable) puede dar saltos distintos a distintas FPS si no se integra con cuidado.</p>
+<div class="res"><span class="tag">Recurso: simulación interactiva</span>
+<p>Mueva los controles: la curva se recalcula con y(t) = v₀t − ½gt².</p>
+<div class="ctl"><label for="v0">Impulso v₀ (m/s)</label><input id="v0" type="range" min="2" max="20" step="0.5" value="8"><output id="v0o"></output></div>
+<div class="ctl"><label for="g">Gravedad g (m/s²)</label><input id="g" type="range" min="1" max="40" step="0.1" value="9.81"><output id="go"></output></div>
+<div class="chart" id="c2"></div><p id="r2" class="src"></p>
+<div id="a2"></div><button id="b2">Hacer saltar al personaje</button></div>
+</section>
+
+<section id="t3">
+<h2>Tema 3 — Gravedad artificial por rotación en hábitats espaciales</h2>
+<h3>Caso de uso en Ingeniería del Software</h3>
+<p><b>Caso concreto:</b> el estudio de NASA de 1975 sobre colonias espaciales (publicado como NASA SP-413) propuso el «toro de Stanford», una rueda de unos 1,8 km de diámetro que giraba cerca de 1 rpm. Ese tipo de diseño se explora hoy con hojas de cálculo y scripts paramétricos que, dado un límite de rpm tolerable y una gravedad objetivo, devuelven el radio necesario.</p>
+<p><b>Concepto físico:</b> movimiento circular uniforme.</p>
+<div class="eq">a_c = ω²·r = v²/r &nbsp;&nbsp; ω = 2π/T = 2πf &nbsp;&nbsp; rpm = ω·60/(2π)</div>
+<p><b>Por qué modelar la física:</b> con valores fijos habría que rediseñar a mano cada variante del hábitat. La ecuación relaciona radio, giro y gravedad, así que un script puede explorar cientos de combinaciones y detectar de inmediato las inviables: por ejemplo, radios chicos exigen muchas rpm y producen un gradiente de gravedad cabeza-pies y efectos de Coriolis que molestan. Lo que cuesta el modelo: el cálculo ideal ignora esos efectos humanos, por lo que se agregan restricciones empíricas.</p>
+<div class="res"><span class="tag">Recurso: diagrama propio</span>
+<svg viewBox="0 0 620 340" width="100%" role="img" aria-label="Diagrama de un hábitat rotatorio con eje, radio y aceleración centrípeta">
+<circle cx="200" cy="170" r="130" fill="none" stroke="var(--ink)" stroke-width="3"/>
+<g class="spin"><g stroke="var(--line)" stroke-width="3"><line x1="70" y1="170" x2="330" y2="170"/><line x1="70" y1="170" x2="330" y2="170" transform="rotate(60 200 170)"/><line x1="70" y1="170" x2="330" y2="170" transform="rotate(120 200 170)"/></g><circle cx="330" cy="170" r="7" fill="var(--ac)"/><circle cx="70" cy="170" r="7" fill="var(--ac)"/></g>
+<circle cx="200" cy="170" r="5" fill="var(--ink)"/>
+<text x="210" y="190">Eje de giro (⊙ sale de la página)</text>
+<path d="M200 170 L330 170" stroke="var(--ac)" stroke-width="2.5"/>
+<text x="248" y="162" style="fill:var(--ac)">radio r</text>
+<path d="M200 40 L200 100" stroke="var(--ac2)" stroke-width="2.5"/><path d="M200 100 l-6 -10 m6 10 l6 -10" stroke="var(--ac2)" stroke-width="2.5"/>
+<text x="208" y="75" style="fill:var(--ac2)">a_c = ω²r (hacia el centro)</text>
+<path d="M120 50 a130 130 0 0 1 60 -18" fill="none" stroke="var(--ink)" stroke-width="1.5"/><text x="95" y="38">ω</text>
+<circle cx="200" cy="40" r="8" fill="var(--ac2)"/><text x="215" y="30">Persona: «suelo» = pared exterior</text>
+<text x="360" y="60">Ecuaciones anotadas</text>
+<text x="360" y="85">a_c = ω² r</text>
+<text x="360" y="105">ω = 2π / T</text>
+<text x="360" y="125">rpm = ω · 60 / 2π</text>
+<text x="360" y="145">r = g / ω²</text>
+<text x="360" y="175" style="fill:var(--ac)">Condición de diseño: a_c = g = 9,81 m/s²</text>
+<text x="200" y="330" text-anchor="middle">Vista frontal del hábitat (corte transversal)</text></svg>
+<h3>Caso numérico trabajado: 1 g</h3>
+<div class="eq">Con r = 900 m (toro de Stanford): ω = √(g/r) = √(9,81/900) = 0,1044 rad/s<br>T = 2π/ω = 60,2 s &nbsp;→&nbsp; 0,997 rpm ≈ 1 rpm<br>Con 2 rpm (ω = 0,2094 rad/s): r = g/ω² = 9,81/0,04386 ≈ 224 m<br>Con r = 100 m: ω = 0,313 rad/s ≈ 2,99 rpm</div>
+<p>Conclusión: para mantenerse bajo ~2 rpm con 1 g se necesitan radios de más de 200 m. Un hábitat pequeño obliga a girar rápido.</p></div>
+</section>
+
+<section id="t4">
+<h2>Tema 4 — Llantas de Fórmula 1: la ventana de temperatura y el agarre</h2>
+<h3>Caso de uso en Ingeniería del Software</h3>
+<p><b>Caso concreto:</b> los simuladores de vuelta y de dinámica vehicular usados en automovilismo (y en videojuegos de simulación) no usan un coeficiente fijo para las llantas, sino modelos como la «Magic Formula» de Pacejka, en los que el agarre depende de la carga vertical y de la temperatura. Los equipos de F1 los usan para estimar la vuelta con distintas estrategias de neumáticos.</p>
+<p><b>Concepto físico:</b> fricción. El modelo simple dice que el agarre es proporcional a la fuerza normal:</p>
+<div class="eq">f_máx = μₛ·N (modelo simple, μ constante) &nbsp;&nbsp; f_k = μ_k·N &nbsp;&nbsp; N = m·g (en plano)<br>Modelo real: μ = μ(N, T), y μ decrece al aumentar N («sensibilidad a la carga»)</div>
+<p><b>Por qué modelar la física:</b> un coeficiente fijo sobrestima el agarre en curvas muy cargadas y no reproduce que la llanta fría o sobrecalentada pierde agarre, lo que determina cuándo entrar a boxes. Modelar μ(N, T) permite predecir esos efectos y optimizar la puesta a punto antes de salir a pista. El costo: hay que calibrar parámetros con datos de pista o laboratorio, y los modelos pierden validez fuera del rango donde se ajustaron.</p>
+<div class="res"><span class="tag">Recurso: visualización de datos</span>
+<div class="chart" id="c4a"></div><div class="chart" id="c4b"></div>
+<div class="ctl"><label for="tt">Temperatura (°C)</label><input id="tt" type="range" min="40" max="160" value="100"><output id="tto"></output></div><div id="tire" style="display:flex;gap:1rem;align-items:center"></div>
+<p class="src">Fuente: datos calculados por el autor con modelos ilustrativos declarados: μ(N)=2,0−0,0001·N y μ(T)=2,0·exp(−((T−100)/25)²). Los parámetros son ilustrativos, no mediciones reales de Pirelli ni de ningún equipo. El fenómeno de sensibilidad a la carga se describe en Milliken &amp; Milliken (1995).</p></div>
+<h3>Lectura</h3>
+<p>En la primera gráfica, la línea recta es lo que predice el modelo simple y la curva lo que ocurre con sensibilidad a la carga: al subir N de 1000 a 6000 N el modelo simple pronostica una fuerza de 12 000 N, mientras que el modelo con sensibilidad solo da 8400 N. La segunda gráfica muestra la «ventana»: el agarre es máximo cerca de 100 °C y cae si la llanta está fría o demasiado caliente.</p>
+</section>
+
+<section id="t5">
+<h2>Tema 5 — El resorte virtual detrás de un control háptico</h2>
+<h3>Caso de uso en Ingeniería del Software</h3>
+<p><b>Caso concreto:</b> los gatillos adaptativos del control DualSense de PlayStation 5 tienen un motor que ofrece resistencia al dedo. Los juegos activan efectos mediante la API del control, indicando la posición donde empieza la resistencia y su fuerza, de modo que tensar un arco se siente distinto a disparar una pistola.</p>
+<p><b>Concepto físico:</b> ley de Hooke y tercera ley de Newton:</p>
+<div class="eq">F = −k·x (fuerza restauradora del resorte virtual) &nbsp;&nbsp; F_motor sobre dedo = −F_dedo sobre gatillo</div>
+<p><b>Por qué modelar la física:</b> una vibración fija no distingue cuánto ha presionado el jugador. Con F = k·x el software calcula en cada ciclo la fuerza según el recorrido x del gatillo, y el jugador siente una resistencia creciente coherente con «tensar algo». Cambiar k o añadir un «clic» reproduce otros mecanismos sin grabar efectos distintos. El costo: el control debe medir x y actualizar el motor muy rápido, y la fuerza real está limitada por el hardware.</p>
+<div class="res"><span class="tag">Recurso: multimedia con análisis</span>
+<div id="vid"></div>
+<h3>Análisis</h3>
+<p>La curva de abajo es la que el software impone: no hay fuerza durante los primeros 2 mm (holgura), después F = k(x − 2 mm) con k = 1,5 N/mm hasta 10 mm, donde la fuerza cae de golpe al «romper» el disparo.</p>
+<p>En el video de The Tech Tales, a los 1:21 el presentador anuncia que va a probar los gatillos adaptativos. En el instante <b>1:32</b> presiona el gatillo con fuerza y comenta que ya no está tan suave como antes, que ahora se ha endurecido; además se nota una vibración.</p>
+<p><b>Interpretación con la física:</b> sin el efecto, el gatillo solo opone la resistencia de su resorte mecánico, pequeña y casi constante. Con el efecto activo, el motor del control aplica una fuerza contra el dedo que depende del recorrido, como un resorte virtual: <b>F = −kx</b>. Cuanto más se hunde el gatillo (x mayor), más fuerza debe hacer el dedo para seguir avanzando, y eso es lo que se percibe como «duro». Por la tercera ley de Newton, la fuerza del dedo sobre el gatillo y la del motor sobre el dedo son de igual magnitud y sentido opuesto.</p>
+<p>Ese comportamiento corresponde a la zona lineal de la curva de abajo, F = k(x − 2 mm). La vibración que se nota en el video es otro efecto háptico que el control puede combinar con la resistencia. El video no permite medir x ni F, así que la holgura de 2 mm, k = 1,5 N/mm y el «clic» a 10 mm son valores ilustrativos de mi modelo, no mediciones del DualSense.</p>
+<div class="chart" id="c5"></div>
+<div class="ctl"><label for="gx">Recorrido x (mm)</label><input id="gx" type="range" min="0" max="14" step="0.1" value="0"><output id="gxo"></output></div><div id="trg"></div>
+<p class="src">Curva generada por el autor con el modelo declarado; k ilustrativo.</p></div>
+</section>
+
+<section id="fuentes">
+<h2>Fuentes</h2>
+<ul class="f">
+<li>PX4 Autopilot, documentación del estimador EKF2 (docs.px4.io).</li>
+<li>Pittman, K. (2016). «Math for Game Programmers: Building a Better Jump». Game Developers Conference.</li>
+<li>Johnson, R. y Holbrow, C. (eds.) (1977). <i>Space Settlements: A Design Study</i>. NASA SP-413.</li>
+<li>Pacejka, H. y Bakker, E. (1991). «The Magic Formula Tyre Model». <i>Vehicle System Dynamics</i>.</li>
+<li>Milliken, W. y Milliken, D. (1995). <i>Race Car Vehicle Dynamics</i>. SAE International.</li>
+<li>Sony Interactive Entertainment, documentación pública del control DualSense (gatillos adaptativos).</li>
+<li>The Tech Tales. «Testing PS5 Dual Sense - Adaptive Triggers, Vibration, Motion Sensor, Touch Pad». YouTube. https://www.youtube.com/watch?v=_ED1rXrVOVk</li>
+<li>Todos los datos y gráficas son generados por el autor, según se indica en cada tema.</li>
+</ul></section>
+</main>
+<footer><p class="src">Repositorio: [PEGAR URL] · Este portafolio crece en los avances 2 y final.</p></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+function chart(id,xs,series,xl,yl,title){
+  const W=640,H=250,L=58,R=14,T=26,B=42;
+  let xmin=Math.min(...xs),xmax=Math.max(...xs),all=series.flatMap(s=>s.ys);
+  let ymin=Math.min(0,...all),ymax=Math.max(...all);if(ymax==ymin)ymax=ymin+1;
+  const X=x=>L+(x-xmin)/(xmax-xmin)*(W-L-R),Y=y=>H-B-(y-ymin)/(ymax-ymin)*(H-B-T);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:420px" role="img" aria-label="${title}"><text x="${L}" y="14" style="font-weight:700">${title}</text>`;
+  for(let i=0;i<=5;i++){
+    const yv=ymin+(ymax-ymin)*i/5,xv=xmin+(xmax-xmin)*i/5;
+    s+=`<line x1="${L}" x2="${W-R}" y1="${Y(yv)}" y2="${Y(yv)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(yv)+4}" text-anchor="end">${+yv.toPrecision(3)}</text>`;
+    s+=`<text x="${X(xv)}" y="${H-B+15}" text-anchor="middle">${+xv.toPrecision(3)}</text>`;
+  }
+  s+=`<line x1="${L}" x2="${L}" y1="${T}" y2="${H-B}" stroke="var(--ink)"/><line x1="${L}" x2="${W-R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)"/>`;
+  series.forEach((d,i)=>{
+    s+=`<polyline fill="none" stroke="${d.c}" stroke-width="2.4" points="${xs.map((x,j)=>X(x).toFixed(1)+','+Y(d.ys[j]).toFixed(1)).join(' ')}"/>`;
+    s+=`<text x="${W-R-6}" y="${T+14*i+6}" text-anchor="end" style="fill:${d.c};font-weight:700">${d.n}</text>`;
+  });
+  s+=`<text x="${(L+W-R)/2}" y="${H-6}" text-anchor="middle">${xl}</text><text transform="translate(13 ${(T+H-B)/2}) rotate(-90)" text-anchor="middle">${yl}</text></svg>`;
+  $(id).innerHTML=s;
+}
+const A="#0a6c8c",M="#b3226b",G="#7a7a00";
+// Tema 1
+(function(){
+  const ph=[[2,0],[0,1.5],[-2,0],[0,-1.5]],dt=.1,t=[],X=[],Y=[],VX=[],VY=[],V=[],AX=[],AY=[];
+  let x=0,y=0,vx=0,vy=0;
+  for(let i=0;i<=200;i++){
+    const tt=i*dt,p=ph[Math.min(3,Math.floor(tt/5+1e-9))];
+    if(i==200)p[0]=p[0];
+    t.push(tt);X.push(x);Y.push(y);VX.push(vx);VY.push(vy);V.push(Math.hypot(vx,vy));AX.push(p[0]);AY.push(p[1]);
+    x+=vx*dt+.5*p[0]*dt*dt;y+=vy*dt+.5*p[1]*dt*dt;vx+=p[0]*dt;vy+=p[1]*dt;
+  }
+  chart("c1a",t,[{n:"x(t)",ys:X,c:A},{n:"y(t)",ys:Y,c:M}],"Tiempo t (s)","Posición (m)","Posición del dron");
+  chart("c1b",t,[{n:"vₓ",ys:VX,c:A},{n:"v_y",ys:VY,c:M},{n:"|v|",ys:V,c:G}],"Tiempo t (s)","Velocidad (m/s)","Velocidad del dron");
+  chart("c1c",t,[{n:"aₓ",ys:AX,c:A},{n:"a_y",ys:AY,c:M}],"Tiempo t (s)","Aceleración (m/s²)","Aceleración del dron");
+  const k=4,px=i=>30+X[i]*k,py=i=>310-Y[i]*k;
+  $("a1").innerHTML=`<svg viewBox="0 0 460 340" width="100%" style="max-width:460px" role="img" aria-label="Trayectoria del dron en el plano x-y"><polyline fill="none" stroke="var(--line)" stroke-width="3" points="${X.map((_,i)=>px(i)+','+py(i)).join(' ')}"/><line x1="30" y1="310" x2="440" y2="310" stroke="var(--ink)"/><line x1="30" y1="10" x2="30" y2="310" stroke="var(--ink)"/><text x="400" y="328">x (m)</text><text x="36" y="20">y (m)</text><text x="30" y="326">0</text><text x="${px(200)-8}" y="326">${X[200]}</text><text x="4" y="${py(200)+4}">${Y[200]}</text><polyline id="tr1" fill="none" stroke="${A}" stroke-width="3"/><circle id="d1" cx="30" cy="310" r="8" fill="${M}"/></svg>`;
+  let raf;$("b1").onclick=()=>{cancelAnimationFrame(raf);const t0=performance.now();
+    (function f(now){const tt=Math.min(20,(now-t0)/1000*2),i=Math.min(200,Math.round(tt/.1));
+      $("d1").setAttribute("cx",px(i));$("d1").setAttribute("cy",py(i));
+      $("tr1").setAttribute("points",X.slice(0,i+1).map((_,j)=>px(j)+','+py(j)).join(' '));
+      $("r1").textContent=`t = ${(i*.1).toFixed(1)} s · |v| = ${V[i].toFixed(1)} m/s · (x, y) = (${X[i].toFixed(1)}, ${Y[i].toFixed(1)}) m`;
+      if(tt<20)raf=requestAnimationFrame(f);})(t0);};
+})();
+// Tema 2
+function sim2(){
+  const v0=+$("v0").value,g=+$("g").value,T=2*v0/g,ts=[],ys=[];
+  for(let i=0;i<=60;i++){const t=T*i/60;ts.push(t);ys.push(v0*t-.5*g*t*t);}
+  $("v0o").textContent=v0+" m/s";$("go").textContent=g+" m/s²";
+  chart("c2",ts,[{n:"y(t)",ys:ys,c:A}],"Tiempo t (s)","Altura y (m)","Trayectoria del salto");
+  $("r2").textContent=`h_máx = ${(v0*v0/(2*g)).toFixed(2)} m · t_aire = ${T.toFixed(2)} s · t_ápice = ${(T/2).toFixed(2)} s`;
+}
+$("v0").oninput=$("g").oninput=sim2;sim2();
+let raf2;$("b2").onclick=()=>{cancelAnimationFrame(raf2);
+  const v0=+$("v0").value,g=+$("g").value,T=2*v0/g,H=v0*v0/(2*g),sy=170/H,dur=Math.min(T,5)*1000,t0=performance.now(),pts=[];
+  const draw=(x,y)=>{$("a2").innerHTML=`<svg viewBox="0 0 640 230" width="100%" role="img" aria-label="Personaje saltando"><line x1="20" x2="620" y1="212" y2="212" stroke="var(--ink)" stroke-width="3"/><polyline fill="none" stroke="${M}" stroke-dasharray="4 4" stroke-width="2" points="${pts.join(' ')}"/><circle cx="${x}" cy="${198-y*sy}" r="14" fill="${A}"/><circle cx="${x+5}" cy="${194-y*sy}" r="3" fill="#fff"/></svg>`};
+  (function f(now){const u=Math.min(1,(now-t0)/dur),t=u*T,y=v0*t-.5*g*t*t,x=40+u*560;pts.push(x+','+(198-y*sy));draw(x,Math.max(0,y));if(u<1)raf2=requestAnimationFrame(f);})(t0);};
+$("a2").innerHTML='<p class="src">Pulsa el botón para ver el salto con los valores actuales.</p>';
+// Tema 4
+(function(){
+  const N=[],lin=[],real=[];
+  for(let n=0;n<=6000;n+=250){N.push(n);lin.push(2*n);real.push((2-.0001*n)*n);}
+  chart("c4a",N,[{n:"Modelo simple μ=2,0",ys:lin,c:A},{n:"Con sensibilidad a la carga",ys:real,c:M}],"Carga vertical N (N)","Fuerza lateral máxima (N)","Fuerza lateral máxima vs. carga vertical");
+  const Tt=[],mu=[];
+  for(let T=40;T<=160;T+=4){Tt.push(T);mu.push(2*Math.exp(-(((T-100)/25)**2)));}
+  chart("c4b",Tt,[{n:"μ(T)",ys:mu,c:M}],"Temperatura de la llanta (°C)","Coeficiente de agarre μ (adimensional)","Ventana de temperatura");
+  const up=()=>{const T=+$("tt").value,m=2*Math.exp(-(((T-100)/25)**2)),h=220-(T-40)/120*220,st=T<80?"fría: poco agarre":T>120?"sobrecalentada: el agarre cae":"dentro de la ventana";
+    $("tto").textContent=T+" °C";
+    $("tire").innerHTML=`<svg width="90" height="90" viewBox="0 0 90 90"><circle cx="45" cy="45" r="36" fill="none" stroke="hsl(${h} 80% 50%)" stroke-width="16"/><circle cx="45" cy="45" r="22" fill="var(--bg)"/></svg><div style="flex:1"><div style="background:var(--line);border-radius:5px;height:14px"><div style="width:${m/2*100}%;height:14px;border-radius:5px;background:hsl(${h} 80% 50%);transition:width .15s"></div></div><p class="src">μ = ${m.toFixed(2)} · llanta ${st}</p></div>`;};
+  $("tt").oninput=up;up();
+})();
+// Tema 5
+(function(){
+  const x=[],F=[];
+  for(let i=0;i<=140;i++){const xx=i/10;x.push(xx);F.push(xx<2?0:xx<=10?1.5*(xx-2):1);}
+  chart("c5",x,[{n:"F(x)",ys:F,c:A}],"Desplazamiento del gatillo x (mm)","Fuerza sobre el dedo F (N)","Fuerza vs. desplazamiento");
+  const ux=()=>{const v=+$("gx").value,f=v<2?0:v<=10?1.5*(v-2):1;$("gxo").textContent=v+" mm";
+    $("trg").innerHTML=`<svg viewBox="0 0 640 70" width="100%"><rect x="20" y="10" width="600" height="14" rx="7" fill="var(--line)"/><rect x="${20+v/14*560}" y="4" width="40" height="26" rx="6" fill="${A}"/><rect x="20" y="44" width="${f/12*600}" height="14" rx="7" fill="${M}"/><text x="24" y="40">F = ${f.toFixed(1)} N ${v>10?"· ¡clic! la fuerza cae":v>=2?"· resorte virtual activo":"· holgura sin fuerza"}</text></svg>`;};
+  $("gx").oninput=ux;ux();
+  const VIDEO_ID="_ED1rXrVOVk";
+  $("vid").innerHTML=VIDEO_ID?`<iframe src="https://www.youtube.com/embed/${VIDEO_ID}?start=81" title="Efecto háptico" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe><p class="src">Video: The Tech Tales, «Testing PS5 Dual Sense - Adaptive Triggers, Vibration, Motion Sensor, Touch Pad», YouTube (gatillos adaptativos desde 1:21). <a href="https://www.youtube.com/watch?v=_ED1rXrVOVk&t=81s" target="_blank" rel="noopener" style="color:var(--ac)">Ver el video en YouTube</a>.</p>`:`<p class="todo">Falta el video: pega el ID de YouTube en la variable VIDEO_ID del script y cita su fuente aquí.</p>`;
+})();
+</script>
+</body>
+</html>
